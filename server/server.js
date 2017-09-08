@@ -24,11 +24,18 @@ io.on('connection', (socket) => {
 
   // registering custom event listener 'Client Emit'
   socket.on('Client Emit', (e) => {
-    console.log('Emit from client', e);
+    console.log('Emit from client', e)
+
+    // global emitting
+    io.emit('Server Emit', {
+      emitter: e.emit_sender,
+      emitted_at: e.time
+    })
+
   })
 
   // Emmiting an event 'Server Emit'
-  socket.emit('Server Emit', { 'someKey': 'someValue', 'emit_sender': 'server', 'time': new Date() })
+  // socket.emit('Server Emit', { 'emit_sender': 'server', 'time': new Date() })
 
 })
 

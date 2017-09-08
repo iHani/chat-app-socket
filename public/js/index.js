@@ -4,7 +4,7 @@ socket.on('connect', () => {
   console.log('Connected to the server')
 
   // Emmiting an event 'Client Emit'
-  socket.emit('Client Emit', { 'someKey': 'someValue', 'emit_sender': 'client', 'time': new Date() })
+  socket.emit('Client Emit', { 'emit_sender': 'client', 'time': new Date() })
 
 })
 
