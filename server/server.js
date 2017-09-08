@@ -19,8 +19,16 @@ io.on('connection', (socket) => {
   console.log('New user connected!');
 
   socket.on('disconnect', () => {
-    console.log('Disconnected user..');
+    console.log('Disconnected user');
   })
+
+  // registering custom event listener 'Client Emit'
+  socket.on('Client Emit', (e) => {
+    console.log('Emit from client', e);
+  })
+
+  // Emmiting an event 'Server Emit'
+  socket.emit('Server Emit', { 'someKey': 'someValue', 'emit_sender': 'server', 'time': new Date() })
 
 })
 
