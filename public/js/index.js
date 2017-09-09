@@ -1,18 +1,42 @@
 var socket = io()
 
 socket.on('connect', () => {
-  console.log('Connected to the server')
 
-  // Emmiting an event 'Client Emit'
-  socket.emit('Client Emit', { 'emit_sender': 'client', 'time': new Date() })
+  appendli(`${socket.id} LOGGED IN.`)
+  socket.emit('NewUserLoggedIn', socket.id)
 
+  socket.on('NewUserLoggedInNotification', (socketid) => {
+    appendli(`${socketid} LOGGED IN.`)
+  })
+
+  socket.on('NewMsg', (msg) => {
+    appendli(`${msg.from}: ${msg.text}`)
+  })
+
+  socket.on('disconnect', () => {
+    //
+  })
+
+}) // socket.on 'connect'
+
+jQuery('#msg-form').on('submit', function (e) {
+  e.preventDefault()
+
+  var clientMsg = {
+    from: socket.id,
+    text: jQuery('[name=msg]').val(),
+    createdAt: new Date().getTime()
+  }
+
+  socket.emit('NewMsg', clientMsg, (ack) => {
+    // console.log('Server Ack my message.', ack);
+    appendli(`${ack.from}: ${ack.text}`)
+    jQuery('[name=msg]').val('')
+  })
 })
 
-socket.on('disconnect', () => {
-  console.log('Disonnected from the server')
-})
-
-// registering custom event listener 'Server Emit'
-socket.on('Server Emit', (e) => {
-  console.log('Emit from the server', e);
-})
+function appendli(msg) {
+  let li = jQuery('<li></li>')
+  li.text(msg)
+  jQuery('#messages').append(li)
+}

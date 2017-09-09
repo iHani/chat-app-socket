@@ -7,7 +7,16 @@
 <body>
   <p>Hello, welcome to the app!</p>
 
+  <ul id="messages">
+  </ul>
+
+  <form id="msg-form">
+    <input type="text" name="msg" placeholder="Enter msg here..">
+    <button type="submit" name="button">Send</button>
+  </form>
+
   <script src="socket.io/socket.io.js"></script>
+  <script src="js/libs/jquery-3.2.1.min.js"></script>
   <script src="js/index.js"></script>
 
 </body>

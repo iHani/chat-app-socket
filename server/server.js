@@ -3,6 +3,7 @@ const http = require('http')
 const express = require('express')
 const socketIO = require('socket.io')
 
+const { generateMEssage } = require('./utils/message')
 const public_path = path.join(__dirname, '../public')
 const port = process.env.PORT || 3000
 var app = express()
@@ -11,33 +12,34 @@ var io = socketIO(server)
 
 app.use(express.static('public'))
 
-// app.get('/', function (req, res) {
-//   res.send('Hello World!')
-// })
-
 io.on('connection', (socket) => {
-  console.log('New user connected!');
 
-  socket.on('disconnect', () => {
-    console.log('Disconnected user');
+  socket.on('NewUserLoggedIn', (socketid) => {
+    socket.broadcast.emit('NewUserLoggedInNotification', socketid)
   })
 
   // registering custom event listener 'Client Emit'
-  socket.on('Client Emit', (e) => {
-    console.log('Emit from client', e)
+  socket.on('NewMsg', (msg, ack) => {
+
+    let obj = {
+      from: msg.from,
+      text: msg.text,
+      createdAt: msg.createdAt,
+      recievedAt: new Date().getTime(),
+    }
 
     // global emitting
-    io.emit('Server Emit', {
-      emitter: e.emit_sender,
-      emitted_at: e.time
-    })
+    socket.broadcast.emit('NewMsg', obj)
 
+    ack(obj)
+
+  }) // socket.on 'NewMsg'
+
+  socket.on('disconnect', (socketid) => {
+    //
   })
 
-  // Emmiting an event 'Server Emit'
-  // socket.emit('Server Emit', { 'emit_sender': 'server', 'time': new Date() })
-
-})
+}) // io.on 'connection'
 
 server.listen(port, function () {
   console.log(`Chat app listening on port ${port}!`)
